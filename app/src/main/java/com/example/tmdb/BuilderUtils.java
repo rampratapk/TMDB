@@ -5,5 +5,5 @@ public class BuilderUtils {
     public static String tag = "ram_pratap";
     public static String popular = "Popular Movies";
     public static String topMovies = "Top Movies ";
-
+    public static Category category = Category.Top_Rated;
 }

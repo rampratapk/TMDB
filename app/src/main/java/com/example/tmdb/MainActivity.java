@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.tmdb.MVP.model.Images;
 import com.example.tmdb.MVP.model.Movie;
@@ -66,14 +67,15 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private MoviesAdapter moviesAdapter;
     private EndlessScrollListener endlessScrollListener;
     private Images images;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        category = Category.Top_Rated;
-        setTitle(BuilderUtils.topMovies);
+        category = BuilderUtils.category;
+        setTitle(getText(BuilderUtils.category));
         setupContentView();
         DaggerMainComponent.builder()
                 .appComponent(App.getAppComponent(getApplication()))
@@ -88,6 +90,11 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         endlessScrollListener = new EndlessScrollListener(linearLayoutManager, this);
         contentView.setLayoutManager(linearLayoutManager);
         contentView.addOnScrollListener(endlessScrollListener);
+    }
+
+    private String getText(Category c){
+        if(c==Category.Popular)return BuilderUtils.popular;
+        return BuilderUtils.topMovies;
     }
 
     @Override
@@ -127,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 searchView.onActionViewCollapsed();
                 Toast.makeText(MainActivity.this, q,Toast.LENGTH_LONG).show();
                 category = Category.Search;
+                BuilderUtils.category = category;
                 return false;
 
             }
@@ -144,11 +152,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         switch (id){
             case R.id.popular:
                 category = Category.Popular;
+                BuilderUtils.category = category;
                 presenter.start();
                 setTitle(BuilderUtils.popular);
                 return true;
             case R.id.top_rated:
                 category = Category.Top_Rated;
+                BuilderUtils.category = category;
                 topPresenter.start();
                 setTitle(BuilderUtils.topMovies);
                 return true;
